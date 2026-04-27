@@ -1,0 +1,17 @@
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+.env
+.env.*
+*.log
+dist/
+build/
+*.o
+*.a
+*.so
+*.dylib
+target/
