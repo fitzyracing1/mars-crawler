@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3XB — Web Entity Intelligence for Community Lenders</title>
+<style>
+  :root {
+    --bg: #07080f;
+    --surface: #0e1018;
+    --border: #1e2133;
+    --cyan: #7df7ff;
+    --pink: #ff6b9d;
+    --yellow: #ffe66d;
+    --green: #a8ff78;
+    --text: #c8cfe0;
+    --muted: #5a6080;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; }
+
+  /* NAV */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px; border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; background: rgba(7,8,15,0.92); backdrop-filter: blur(12px); z-index: 100;
+  }
+  .logo { font-family: monospace; font-size: 20px; color: var(--cyan); font-weight: bold; letter-spacing: 2px; }
+  .logo span { color: var(--pink); }
+  nav a { color: var(--muted); text-decoration: none; font-size: 14px; margin-left: 32px; transition: color .2s; }
+  nav a:hover { color: #fff; }
+  .nav-cta {
+    background: var(--cyan); color: #000; padding: 8px 20px; border-radius: 6px;
+    font-weight: 600; font-size: 13px; margin-left: 32px;
+  }
+  .nav-cta:hover { background: #fff; color: #000; }
+
+  /* HERO */
+  .hero {
+    text-align: center; padding: 100px 48px 80px;
+    background: radial-gradient(ellipse 80% 50% at 50% 0%, #0d1a2e 0%, transparent 70%);
+  }
+  .hero-tag {
+    display: inline-block; background: #0e1a2e; border: 1px solid #1e3a5f;
+    color: var(--cyan); font-size: 12px; font-family: monospace; letter-spacing: 1px;
+    padding: 5px 14px; border-radius: 20px; margin-bottom: 28px;
+  }
+  h1 { font-size: clamp(36px, 6vw, 68px); font-weight: 700; line-height: 1.1; color: #fff; margin-bottom: 24px; }
+  h1 em { font-style: normal; color: var(--cyan); }
+  .hero p { font-size: 19px; color: var(--muted); max-width: 600px; margin: 0 auto 40px; }
+  .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--cyan); color: #000; padding: 14px 32px;
+    border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(125,247,255,0.25); }
+  .btn-secondary {
+    background: transparent; color: #fff; padding: 14px 32px;
+    border-radius: 8px; font-weight: 600; font-size: 15px; text-decoration: none;
+    border: 1px solid var(--border); transition: border-color .15s;
+  }
+  .btn-secondary:hover { border-color: #fff; }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: flex; justify-content: center; gap: 64px; flex-wrap: wrap;
+    padding: 40px 48px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .stat-item { text-align: center; }
+  .stat-num { font-size: 36px; font-weight: 700; color: #fff; font-family: monospace; }
+  .stat-num span { color: var(--cyan); }
+  .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* SECTIONS */
+  section { padding: 96px 48px; max-width: 1100px; margin: 0 auto; }
+  .section-tag { font-family: monospace; font-size: 12px; color: var(--cyan); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
+  h2 { font-size: clamp(28px, 4vw, 44px); color: #fff; margin-bottom: 16px; line-height: 1.2; }
+  h2 em { font-style: normal; color: var(--pink); }
+  .section-sub { font-size: 17px; color: var(--muted); max-width: 540px; margin-bottom: 56px; }
+
+  /* HOW IT WORKS */
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+  .step {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 28px 24px;
+    transition: border-color .2s;
+  }
+  .step:hover { border-color: var(--cyan); }
+  .step-num { font-family: monospace; font-size: 11px; color: var(--cyan); letter-spacing: 2px; margin-bottom: 12px; }
+  .step h3 { font-size: 17px; color: #fff; margin-bottom: 10px; }
+  .step p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  /* LOAN SCORER */
+  .loan-demo {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 40px; display: grid;
+    grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;
+  }
+  @media(max-width:700px){ .loan-demo { grid-template-columns: 1fr; } }
+  .loan-demo h3 { font-size: 24px; color: #fff; margin-bottom: 12px; }
+  .loan-demo p { color: var(--muted); font-size: 15px; margin-bottom: 24px; }
+  .score-card {
+    background: #0a0c14; border: 1px solid var(--border);
+    border-radius: 12px; padding: 28px; font-family: monospace;
+  }
+  .score-card .borrower { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+  .score-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 10px; }
+  .score-row .label { color: var(--muted); }
+  .score-row .value { color: #fff; }
+  .score-row .value.good { color: var(--green); }
+  .composite { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .composite .big { font-size: 40px; font-weight: 700; color: var(--green); }
+  .verdict {
+    display: inline-block; background: rgba(168,255,120,0.12);
+    color: var(--green); border: 1px solid rgba(168,255,120,0.3);
+    padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 700;
+    margin-top: 8px; letter-spacing: 1px;
+  }
+  .verdict.review { background: rgba(255,230,109,0.12); color: var(--yellow); border-color: rgba(255,230,109,0.3); }
+  .verdict.decline { background: rgba(255,107,157,0.12); color: var(--pink); border-color: rgba(255,107,157,0.3); }
+
+  /* API ENDPOINTS */
+  .endpoints { display: grid; gap: 12px; }
+  .endpoint {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 24px;
+    display: flex; align-items: flex-start; gap: 16px;
+    transition: border-color .2s;
+  }
+  .endpoint:hover { border-color: var(--border); border-color: #2e3555; }
+  .method {
+    font-family: monospace; font-size: 11px; font-weight: 700; padding: 4px 10px;
+    border-radius: 4px; white-space: nowrap; margin-top: 2px;
+  }
+  .get { background: rgba(125,247,255,0.1); color: var(--cyan); }
+  .post { background: rgba(255,107,157,0.1); color: var(--pink); }
+  .endpoint-path { font-family: monospace; font-size: 14px; color: #fff; margin-bottom: 4px; }
+  .endpoint-desc { font-size: 13px; color: var(--muted); }
+
+  /* PRICING */
+  .pricing { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+  .plan {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 36px 28px;
+  }
+  .plan.featured { border-color: var(--cyan); background: #0a1520; }
+  .plan-name { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+  .plan.featured .plan-name { color: var(--cyan); }
+  .plan-price { font-size: 42px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .plan-price span { font-size: 16px; color: var(--muted); font-weight: 400; }
+  .plan-desc { font-size: 14px; color: var(--muted); margin-bottom: 28px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+  .plan ul { list-style: none; }
+  .plan ul li { font-size: 14px; color: var(--text); padding: 7px 0; }
+  .plan ul li::before { content: '✓ '; color: var(--cyan); font-weight: 700; }
+  .plan-btn {
+    display: block; text-align: center; margin-top: 28px;
+    padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px;
+    text-decoration: none; transition: all .15s;
+  }
+  .plan-btn.outline { border: 1px solid var(--border); color: #fff; }
+  .plan-btn.outline:hover { border-color: #fff; }
+  .plan-btn.solid { background: var(--cyan); color: #000; }
+  .plan-btn.solid:hover { background: #fff; }
+
+  /* CTA */
+  .cta-section {
+    text-align: center; padding: 96px 48px;
+    border-top: 1px solid var(--border);
+    background: radial-gradient(ellipse 60% 60% at 50% 100%, #0d1a2e 0%, transparent 70%);
+  }
+  .cta-section h2 { margin-bottom: 16px; }
+  .cta-section p { color: var(--muted); font-size: 17px; max-width: 480px; margin: 0 auto 36px; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border); padding: 32px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; color: var(--muted); flex-wrap: wrap; gap: 12px;
+  }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: #fff; }
+
+  /* LIVE DEMO */
+  .demo-box {
+    background: #0a0c14; border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden; margin-top: 40px;
+  }
+  .demo-bar {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 12px 20px; font-family: monospace; font-size: 12px;
+    display: flex; align-items: center; gap: 8px; color: var(--muted);
+  }
+  .demo-bar .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .demo-output { padding: 24px; font-family: monospace; font-size: 13px; line-height: 1.9; overflow-x: auto; }
+  .k { color: var(--muted); }
+  .s { color: var(--cyan); }
+  .n { color: var(--yellow); }
+  .b { color: var(--green); font-weight: bold; }
+  .r { color: var(--pink); font-weight: bold; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">3X<span>B</span></div>
+  <div>
+    <a href="#how">How it works</a>
+    <a href="#api">API</a>
+    <a href="#pricing">Pricing</a>
+    <a href="mailto:almeidacorporation20@gmail.com" class="nav-cta">Get Access</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">✦ Community Plan, Inc. — Est. ~1924</div>
+  <h1>The web's entity graph,<br><em>scored for lending.</em></h1>
+  <p>3XB crawls the internet in real time, extracts every person, organization, and place, and weights them for community loan underwriting.</p>
+  <div class="hero-btns">
+    <a href="#loan-score" class="btn-primary">See Loan Scorer</a>
+    <a href="#api" class="btn-secondary">View API Docs →</a>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num" id="stat-entities">99,000<span>+</span></div>
+    <div class="stat-label">Entities Tagged</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" id="stat-edges">316,000<span>+</span></div>
+    <div class="stat-label">Relationships Mapped</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" id="stat-pages">3,500<span>+</span></div>
+    <div class="stat-label">Pages Crawled</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">30<span>+</span></div>
+    <div class="stat-label">Seed Domains</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-tag">// how it works</div>
+  <h2>From raw web to <em>risk score</em></h2>
+  <p class="section-sub">Four layers turn live internet data into actionable underwriting signals.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01 // CRAWL</div>
+      <h3>Live Web Crawler</h3>
+      <p>Async crawler hits 15 pages simultaneously across news, finance, gov, and research domains. Follows links up to 3 hops from seeds.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02 // EXTRACT</div>
+      <h3>NLP Entity Extraction</h3>
+      <p>spaCy named-entity recognition pulls every Person, Organization, Location, Product, and Financial Figure from each page.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03 // SCORE</div>
+      <h3>3XB Weighted Tagging</h3>
+      <p>Sigmoid normalization blends base weight + frequency signals. Temporal decay keeps scores fresh — stale data fades automatically.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">04 // GRAPH</div>
+      <h3>Relationship Propagation</h3>
+      <p>Co-occurrence edges build an entity graph. Risk propagates 2 hops — a founder's connected companies affect their composite score.</p>
+    </div>
+  </div>
+</section>
+
+<!-- LOAN SCORER -->
+<section id="loan-score" style="padding-top:0">
+  <div class="section-tag">// core product</div>
+  <h2>Loan scoring, <em>web-native.</em></h2>
+  <p class="section-sub">One API call returns a composite risk score built from entity weight, neighbor graph, and temporal signals.</p>
+  <div class="loan-demo">
+    <div>
+      <h3>score_loan_applicant()</h3>
+      <p>Pass any borrower entity name. 3XB returns their web prominence weight, 2-hop neighbor risk average, and a composite APPROVE / REVIEW / DECLINE verdict.</p>
+      <p style="margin-top:12px">Built for CDFIs, community banks, and microlenders who need alternative data beyond FICO — especially for entrepreneurs with thin credit files but strong web presence.</p>
+    </div>
+    <div class="score-card">
+      <div class="borrower">GET /entity/AI Startup Founder/loan-score</div>
+      <div class="score-row"><span class="label">borrower</span><span class="value">"AI Startup Founder"</span></div>
+      <div class="score-row"><span class="label">own_weight</span><span class="value good">0.8812</span></div>
+      <div class="score-row"><span class="label">neighbor_risk_avg</span><span class="value good">0.7640</span></div>
+      <div class="score-row"><span class="label">neighbor_count</span><span class="value">3</span></div>
+      <div class="composite">
+        <div class="big">0.8419</div>
+        <div style="font-size:12px;color:#5a6080;margin-bottom:8px">composite_score</div>
+        <div class="verdict">✓ APPROVE</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- API -->
+<section id="api" style="padding-top:0">
+  <div class="section-tag">// rest api</div>
+  <h2>Clean API. <em>No setup.</em></h2>
+  <p class="section-sub">Every endpoint returns JSON. Interactive docs at /docs.</p>
+  <div class="endpoints">
+    <div class="endpoint">
+      <span class="method get">GET</span>
+      <div><div class="endpoint-path">/entity/{name}</div><div class="endpoint-desc">Full entity detail — tag, weight, frequency, live decayed score, neighbors</div></div>
+    </div>
+    <div class="endpoint">
+      <span class="method get">GET</span>
+      <div><div class="endpoint-path">/entity/{name}/loan-score</div><div class="endpoint-desc">Composite APPROVE / REVIEW / DECLINE with neighbor graph risk propagation</div></div>
+    </div>
+    <div class="endpoint">
+      <span class="method get">GET</span>
+      <div><div class="endpoint-path">/entities?tag=Person&min_weight=0.7</div><div class="endpoint-desc">Filtered entity list sorted by weight or frequency</div></div>
+    </div>
+    <div class="endpoint">
+      <span class="method get">GET</span>
+      <div><div class="endpoint-path">/search?q=Google</div><div class="endpoint-desc">Substring search across all 99K+ tagged entities</div></div>
+    </div>
+    <div class="endpoint">
+      <span class="method get">GET</span>
+      <div><div class="endpoint-path">/graph?top_n=200</div><div class="endpoint-desc">Full node + edge graph for D3 / Gephi visualization</div></div>
+    </div>
+    <div class="endpoint">
+      <span class="method post">POST</span>
+      <div><div class="endpoint-path">/entity/{name}/signal</div><div class="endpoint-desc">Inject live X/Twitter signal to boost entity weight and reset decay clock</div></div>
+    </div>
+    <div class="endpoint">
+      <span class="method get">GET</span>
+      <div><div class="endpoint-path">/stats</div><div class="endpoint-desc">Live crawl stats — pages, unique entities, relationship edges</div></div>
+    </div>
+  </div>
+
+  <div class="demo-box">
+    <div class="demo-bar">
+      <div class="dot" style="background:#ff6b9d"></div>
+      <div class="dot" style="background:#ffe66d"></div>
+      <div class="dot" style="background:#a8ff78"></div>
+      <span style="margin-left:8px">curl https://3xb-api.up.railway.app/stats</span>
+    </div>
+    <div class="demo-output">
+<span class="k">{</span><br>
+&nbsp;&nbsp;<span class="s">"pages_crawled"</span><span class="k">:</span> <span class="n">3524</span><span class="k">,</span><br>
+&nbsp;&nbsp;<span class="s">"unique_entities"</span><span class="k">:</span> <span class="n">99262</span><span class="k">,</span><br>
+&nbsp;&nbsp;<span class="s">"relationship_edges"</span><span class="k">:</span> <span class="n">404686</span><span class="k">,</span><br>
+&nbsp;&nbsp;<span class="s">"entities_by_type"</span><span class="k">:</span> <span class="k">{</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"Person"</span><span class="k">:</span> <span class="n">35420</span><span class="k">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"Organization"</span><span class="k">:</span> <span class="n">31807</span><span class="k">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"Location_Political"</span><span class="k">:</span> <span class="n">8912</span><br>
+&nbsp;&nbsp;<span class="k">},</span><br>
+&nbsp;&nbsp;<span class="s">"top_5"</span><span class="k">: [</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">{</span> <span class="s">"name"</span><span class="k">:</span> <span class="s">"Trump"</span><span class="k">,</span> <span class="s">"tag"</span><span class="k">:</span> <span class="s">"Person"</span><span class="k">,</span> <span class="s">"weight"</span><span class="k">:</span> <span class="n">0.9526</span> <span class="k">}</span><span class="k">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">{</span> <span class="s">"name"</span><span class="k">:</span> <span class="s">"Google"</span><span class="k">,</span> <span class="s">"tag"</span><span class="k">:</span> <span class="s">"Organization"</span><span class="k">,</span> <span class="s">"weight"</span><span class="k">:</span> <span class="n">0.9526</span> <span class="k">}</span><br>
+&nbsp;&nbsp;<span class="k">]</span><br>
+<span class="k">}</span>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="padding-top:0">
+  <div class="section-tag">// pricing</div>
+  <h2>Simple, <em>transparent</em> pricing.</h2>
+  <p class="section-sub">Built for CDFIs, credit unions, and community lenders.</p>
+  <div class="pricing">
+    <div class="plan">
+      <div class="plan-name">Starter</div>
+      <div class="plan-price">$500<span>/mo</span></div>
+      <div class="plan-desc">For individual loan officers and small CDFIs</div>
+      <ul>
+        <li>1,000 API calls/month</li>
+        <li>Entity search + detail</li>
+        <li>Loan score endpoint</li>
+        <li>Email support</li>
+      </ul>
+      <a href="mailto:almeidacorporation20@gmail.com?subject=3XB Starter Plan" class="plan-btn outline">Get Started</a>
+    </div>
+    <div class="plan featured">
+      <div class="plan-name">Growth</div>
+      <div class="plan-price">$1,500<span>/mo</span></div>
+      <div class="plan-desc">For CDFI networks and regional lenders</div>
+      <ul>
+        <li>10,000 API calls/month</li>
+        <li>Full graph access</li>
+        <li>X signal injection</li>
+        <li>Neighbor risk propagation</li>
+        <li>Priority support</li>
+        <li>Custom seed domains</li>
+      </ul>
+      <a href="mailto:almeidacorporation20@gmail.com?subject=3XB Growth Plan" class="plan-btn solid">Get Started</a>
+    </div>
+    <div class="plan">
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-price">Custom</div>
+      <div class="plan-desc">For national networks, hedge funds, and alt data buyers</div>
+      <ul>
+        <li>Unlimited API calls</li>
+        <li>On-prem deployment</li>
+        <li>Custom entity types</li>
+        <li>Raw data export (CSV/JSON)</li>
+        <li>Dedicated crawler instance</li>
+        <li>SLA + dedicated support</li>
+      </ul>
+      <a href="mailto:almeidacorporation20@gmail.com?subject=3XB Enterprise" class="plan-btn outline">Contact Us</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="section-tag" style="display:inline-block;margin-bottom:20px">// get started</div>
+  <h2>Ready to see your borrowers<br><em>differently?</em></h2>
+  <p>Join CDFIs and community lenders using web entity intelligence for smarter underwriting.</p>
+  <a href="mailto:almeidacorporation20@gmail.com?subject=3XB Demo Request" class="btn-primary">Request a Demo</a>
+</div>
+
+<footer>
+  <div>© 2026 Community Plan, Inc. — 3XB Weighted Entity Intelligence</div>
+  <div>
+    <a href="#api">API Docs</a> &nbsp;·&nbsp;
+    <a href="mailto:almeidacorporation20@gmail.com">Contact</a>
+  </div>
+</footer>
+
+<script>
+// Pull live stats from the API when available
+const API = window.location.hostname === 'localhost'
+  ? 'http://localhost:8000'
+  : 'https://3xb-api.up.railway.app';
+
+fetch(API + '/stats')
+  .then(r => r.json())
+  .then(d => {
+    const fmt = n => n.toLocaleString();
+    document.getElementById('stat-entities').innerHTML = fmt(d.unique_entities) + '<span>+</span>';
+    document.getElementById('stat-edges').innerHTML    = fmt(d.relationship_edges) + '<span>+</span>';
+    document.getElementById('stat-pages').innerHTML    = fmt(d.pages_crawled) + '<span>+</span>';
+  })
+  .catch(() => {});
+</script>
+</body>
+</html>
